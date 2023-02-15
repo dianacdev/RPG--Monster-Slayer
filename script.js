@@ -91,6 +91,12 @@ const locations = [
         "button functions": [restart, restart, restart],
         text: "💀 You were slaughtered 💀"
     },
+    {
+        name: "win",
+        "button text": ["Replay?","Replay?", "Replay?"],
+        "button functions": [restart, restart, restart],
+        text: "🎉🔥 You defeated the dragon! YOU WIN! 🔥🎉"
+    },
 ]
 
 // Initialize Buttons
@@ -115,7 +121,6 @@ function update(location){
 
 function goTown(){
     update(locations[0])
-    monsterStats.style.display = "none"
 }
 
 function goStore(){
@@ -201,7 +206,7 @@ function attack(){
     if (health <= 0){
         lose()
     }else if(monsterHealth <= 0){
-        defeatMonster()
+        fighting === 2 ? winGame() : defeatMonster() //ternary operation 
     }
 }
 function dodge(){
@@ -218,12 +223,16 @@ function lose(){
     update(locations[5])
 }
 function restart(){
-    update(locations[0])
+    goTown()
     xp = 0
     gold = 100
     health = 100
     currentWeapon = 0
+    inventory = ["stick"]
     xpText.innerText = xp
     goldText.innerText = gold
     healthText.innerText = health
+}
+function winGame(){
+    update(locations[6])
 }
