@@ -1,6 +1,6 @@
 let xp = 0
 let health = 100
-let gold = 100
+let gold = 50
 let currentWeapon = 0
 let fighting
 let monsterHealth
@@ -38,17 +38,17 @@ const weapons = [
 
 const monsters = [
     {
-        name:"slime",
+        name:"Slime",
         level: 2,
         health: 15
     },
     {
-        name:"fanged beast",
+        name:"Fanged Beast",
         level: 8,
         health: 60
     },
     {
-        name:"dragon",
+        name:"Dragon",
         level: 20,
         health: 300
     }
@@ -199,7 +199,13 @@ function goFight(){
 function attack(){
     text.innerText = "The " + monsters[fighting].name + " attacks."
     text.innerHTML += "You attack with your " + weapons[currentWeapon].name + "."
-    health -= monsters[fighting].level; //changing the users health
+
+    if(isMonsterHit()){
+        health -= getMonsterAttackValue(monsters[fighting].level) //changing the users health
+    }else{
+        text.innerText += " You miss."
+    }
+
     monsterHealth -= weapons[currentWeapon].power + Math.floor(Math.random() * xp) + 1 //getting damage on monster
     healthText.innerText = health
     monsterHealthText.innerText = monsterHealth
@@ -207,6 +213,11 @@ function attack(){
         lose()
     }else if(monsterHealth <= 0){
         fighting === 2 ? winGame() : defeatMonster() //ternary operation 
+    }
+
+    if (Math.random() <= .1 && inventory.length !== 1){
+        text.innerText += "Your " +inventory.pop()+" broke"
+        currentWeapon--
     }
 }
 function dodge(){
@@ -235,4 +246,12 @@ function restart(){
 }
 function winGame(){
     update(locations[6])
+}
+function getMonsterAttackValue(level){
+    let hit = (level * 5) - (Math.floor(Math.random()*xp))
+    return hit
+}
+
+function isMonsterHit(){
+    return Math.random() > .2 || health < 20
 }
