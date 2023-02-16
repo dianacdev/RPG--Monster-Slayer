@@ -37,13 +37,13 @@ body {
     color: white;
     padding: 5px;
     background-color: red;
-    border-radius: 15px;
   }
   
   .stat {
     padding-right: 10px;
   }
   button{
+    background-color: whitesmoke;
     border-radius: 20px;
     border: none;
     display: inline;
