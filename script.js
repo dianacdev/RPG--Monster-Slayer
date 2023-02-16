@@ -1,6 +1,6 @@
 let xp = 0
 let health = 100
-let gold = 50
+let gold = 20
 let currentWeapon = 0
 let fighting
 let monsterHealth
@@ -82,7 +82,7 @@ const locations = [
     {
         name: "kill monster",
         "button text": ["Go to town square","Go to town square", "Go to town square"],
-        "button functions": [goTown, goTown, goTown],
+        "button functions": [goTown, goTown, easterEgg],
         text: "The monster screams \"ARGRAHG!\" as it dies. You gain experience points and find gold."
     },
     {
@@ -96,6 +96,18 @@ const locations = [
         "button text": ["Replay?","Replay?", "Replay?"],
         "button functions": [restart, restart, restart],
         text: "🎉🔥 You defeated the dragon! YOU WIN! 🔥🎉"
+    },
+    {
+        name: "easterEgg",
+        "button text": ["2","8", "Go to town square?"],
+        "button functions": [pickTwo, pickEight, goTown],
+        text: "You find a merchant with an offer. Pick a number above. Ten numbers will be randomly chosen between 0 and 10. If the number you choose matches one of the random numbers, you win!"
+    },
+    {
+        name: "dragon trigger",
+        "button text": ["Attack","Dodge", "Run"],
+        "button functions": [attack, dodge, tossGold],
+        text: "The dragon, found you had a hoard of gold. He plans to do anything to obtain your riches."
     },
 ]
 
@@ -120,7 +132,17 @@ function update(location){
 }
 
 function goTown(){
-    update(locations[0])
+    if (gold >= 120){
+        fighting = 2
+        update(locations[8])
+        monsterHealth = monsters[fighting].health
+        monsterStats.style.display = "block"
+        monsterNameText.innerText = monsters[fighting].name
+        monsterHealthText.innerText = monsterHealth;
+    }
+    else{
+        update(locations[0])
+    }
 }
 
 function goStore(){
@@ -234,7 +256,6 @@ function lose(){
     update(locations[5])
 }
 function restart(){
-    goTown()
     xp = 0
     gold = 100
     health = 100
@@ -243,6 +264,7 @@ function restart(){
     xpText.innerText = xp
     goldText.innerText = gold
     healthText.innerText = health
+    goTown()
 }
 function winGame(){
     update(locations[6])
@@ -254,4 +276,45 @@ function getMonsterAttackValue(level){
 
 function isMonsterHit(){
     return Math.random() > .2 || health < 20
+}
+function easterEgg(){
+    update(locations[7])
+}
+function pickTwo(){
+    pick(2)
+}
+function pickEight(){
+    pick(8)
+}
+function pick(guess){
+    let numbers = []
+    while (numbers.length < 10){
+        numbers.push(Math.floor(Math.random() * 11)) //getting a random number between 1 and 10 
+    }
+    text.innerText = "You picked " + guess + ". Here are the random numbers:\n"
+
+    for (let i = 0; i<10; i++){  //loops while i is less than 10
+        text.innerText += numbers[i] +","
+    }
+    if(numbers.indexOf(guess) !== -1){
+        text.innerText += "\nYou won 20 Gold!"
+        gold += 20
+        goldText.innerText = gold
+    }
+    else{
+        text.innerText += "\nYou lost! The merchant has stolen 10 gold from you! The merchant also mentally drained you, lose 10 health."
+        gold -= 10
+        health -=10
+        goldText.innerText = gold
+        healthText.innerText = health
+        if (health <= 0){
+            lose()
+        }
+    }
+}
+function tossGold(){
+    gold = 0
+    goldText.innerText = gold
+    text.innerText += "\n You Evaded the dragon but lost all your gold." 
+    goTown()
 }
